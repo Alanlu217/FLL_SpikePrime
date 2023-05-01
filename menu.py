@@ -54,11 +54,5 @@ class menu:
 
     def display(self):
         for i in range(0, self.index+1):
-            for j in range(0, umath.floor(i / 5)):
-                self.hub.display.pixel(self.page*2 + j, 0, 100)
-                self.hub.display.pixel(self.page*2 + j, 1, 100)
-                self.hub.display.pixel(self.page*2 + j, 2, 100)
-                self.hub.display.pixel(self.page*2 + j, 3, 100)
-                self.hub.display.pixel(self.page*2 + j, 4, 100)
             self.hub.display.pixel(
                 self.page*2 + umath.floor(i / 5), i % 5, 100)
