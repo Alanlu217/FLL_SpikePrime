@@ -5,11 +5,11 @@ from pybricks.robotics import DriveBase
 from pybricks.tools import wait, StopWatch
 
 import umath
-from config import config
+from config import Config
 
 
 class menu:
-    def __init__(self, config: config, pages: list, volume: int = 100):
+    def __init__(self, config: Config, pages: list, volume: int = 100):
         self.config = config
         self.hub = config.hub
 
@@ -21,9 +21,12 @@ class menu:
         self.index = 0
 
         self.hub.system.set_stop_button((Button.LEFT, Button.RIGHT))
+        self.hub.display.text(str(self.hub.battery.voltage()), 500, 30)
         self.hub.speaker.volume(volume)
 
     def update(self):
+
+        # print(self.config.hub.imu.heading())
 
         buttons = self.hub.buttons.pressed()
         if (len(buttons) != 1):

@@ -6,12 +6,11 @@ from pybricks.tools import wait, StopWatch
 
 from micropython import const
 from menu import menu
-from config import config
+from config import Config
 
 import other
 
-hub = InventorHub()
-m_config = config(hub)
+m_config = Config()
 
 
 m_menu = menu(m_config, [m_config.page1, m_config.page2], 50)
