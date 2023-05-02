@@ -16,26 +16,31 @@ class Config:
     def __init__(self):
         self.hub = InventorHub(
             front_side=Axis.Y, top_side=Axis.Z)  # type: ignore
-        self.page1 = [self.reset, self.testTurn]
-
-        self.page2 = [other.printName, other._lightCal,
-                      other._gyroCal, other._tyreClear]
 
         self.SPEED_LIST_COUNT = const(2000)
-        self.ACCELERATION = const(300)
+        self.ACCELERATION = const(200)
         self.STARTSPEED = const(30)
-        self.TURN_SPEED_MIN = const(10)
-        self.TURN_SPEED_MAX = const(180)
+        self.TURN_SPEED_MIN = const(30)
+        self.TURN_SPEED_MAX = const(200)
 
         self.gyro = Gyro(self.hub)
 
         self.leftMotor = Motor(Port.F, Direction.CLOCKWISE)
         self.rightMotor = Motor(Port.B, Direction.COUNTERCLOCKWISE)
 
-        self.drive = Drivebase(self, self.gyro, self.leftMotor, self.rightMotor, 56, 88)
+        self.drive = Drivebase(
+            self, self.gyro, self.leftMotor, self.rightMotor, 56, 88)
+
+        self.page1 = [self.reset, self.testTurn, other.testRun1]
+
+        self.page2 = [other.printName, other._lightCal,
+                      self.gyroCal, other._tyreClear]
 
     def testTurn(self, config):
         self.drive.turnTo(90)
+
+    def gyroCal(self, config):
+        self.gyro.calibrate()
 
     def reset(self, config):
         self.drive.setHead()
