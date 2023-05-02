@@ -23,6 +23,7 @@ class menu:
         self.hub.system.set_stop_button((Button.LEFT, Button.RIGHT))
         self.hub.display.text(str(self.hub.battery.voltage()), 500, 30)
         self.hub.speaker.volume(volume)
+        self.config.hub.light.on(Color.WHITE)
 
     def update(self):
 
@@ -50,7 +51,9 @@ class menu:
                 self.page = 0
             self.index = 0
         elif Button.CENTER in buttons:
+            self.config.hub.light.on(Color.RED)
             self.pages[self.page][self.index](self.config)
+            self.config.hub.light.on(Color.WHITE)
 
         self.display()
         wait(200)
