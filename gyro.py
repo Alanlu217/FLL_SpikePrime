@@ -9,7 +9,6 @@ class Gyro:
         self.gyro = hub.imu
 
         self.readCal()
-        print(self.multiplier)
         if (self.multiplier == 0):
             self.multiplier = 1
 

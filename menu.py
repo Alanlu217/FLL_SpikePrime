@@ -21,7 +21,6 @@ class menu:
         self.index = 0
 
         self.hub.system.set_stop_button((Button.LEFT, Button.RIGHT))
-        self.hub.display.text(str(self.hub.battery.voltage()), 500, 30)
         self.hub.speaker.volume(volume)
         self.config.hub.light.on(Color.WHITE)
 

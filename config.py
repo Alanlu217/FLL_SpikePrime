@@ -20,8 +20,8 @@ class Config:
         self.SPEED_LIST_COUNT = const(2000)
         self.ACCELERATION = const(200)
         self.STARTSPEED = const(30)
-        self.TURN_SPEED_MIN = const(30)
-        self.TURN_SPEED_MAX = const(200)
+        self.TURN_SPEED_MIN = const(50)
+        self.TURN_SPEED_MAX = const(400)
 
         self.gyro = Gyro(self.hub)
 
@@ -33,7 +33,7 @@ class Config:
 
         self.page1 = [self.reset, self.testTurn, other.testRun1]
 
-        self.page2 = [other.printName, other._lightCal,
+        self.page2 = [self.printInfo, other._lightCal,
                       self.gyroCal, other._tyreClear]
 
     def testTurn(self, config):
@@ -44,3 +44,9 @@ class Config:
 
     def reset(self, config):
         self.drive.setHead()
+
+    def printInfo(self, config):
+        print(config.hub.system.name())
+        print(self.hub.battery.voltage())
+        config.hub.display.text(str(config.hub.system.name()), 500, 50)
+        self.hub.display.text(str(self.hub.battery.voltage()), 500, 50)
