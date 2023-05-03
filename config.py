@@ -18,10 +18,10 @@ class Config:
             front_side=Axis.Y, top_side=Axis.Z)  # type: ignore
 
         self.SPEED_LIST_COUNT = const(2000)
-        self.ACCELERATION = const(200)
-        self.STARTSPEED = const(30)
-        self.TURN_SPEED_MIN = const(50)
-        self.TURN_SPEED_MAX = const(400)
+        self.ACCELERATION = const(400)
+        self.STARTSPEED = const(70)
+        self.TURN_SPEED_MIN = const(30)
+        self.TURN_SPEED_MAX = const(600)
 
         self.gyro = Gyro(self.hub)
 

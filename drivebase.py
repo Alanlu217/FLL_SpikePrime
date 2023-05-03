@@ -29,7 +29,7 @@ class Drivebase:
 
     # Gets current heading
     def getHead(self):
-        return round((self.gyro.heading() + 180) % 360 - 180)
+        return (self.gyro.heading() + 180) % 360 - 180
 
     # Sets current heading
     def setHead(self, angle=0):
@@ -55,7 +55,7 @@ class Drivebase:
     def turnTo(self, heading, tolerance=1, timeout=4000):
         angle = self.turnAngle(heading)
         runTime = StopWatch()
-        while angle not in range(-tolerance, tolerance) and runTime.time() < timeout:
+        while round(angle) not in range(-tolerance, tolerance) and runTime.time() < timeout:
             self.drive.drive(0, self.turnSpeed(angle))
             angle = self.turnAngle(heading)
         self.stop()
