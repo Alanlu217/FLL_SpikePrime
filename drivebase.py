@@ -101,7 +101,7 @@ class Drivebase:
                 drive_speed = self.rampSpeed(posDistance, curr_distance, speed)
 
             self.drive.drive(drive_speed*self.sign(distance),
-                             self.turnAngle(heading) * self.config.TURN_SPEED_MAX / 40)
+                             self.turnAngle(heading) * self.config.TURN_CORRECTION_SPEED)
             # print("Speed, drive_speed, distance: ", speed, drive_speed, \
             #        curr_distance)
             # logData.append([drive_speed, curr_distance])

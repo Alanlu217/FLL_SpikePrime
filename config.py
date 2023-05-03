@@ -22,6 +22,7 @@ class Config:
         self.STARTSPEED = const(70)
         self.TURN_SPEED_MIN = const(30)
         self.TURN_SPEED_MAX = const(600)
+        self.TURN_CORRECTION_SPEED = const(20)
 
         self.gyro = Gyro(self.hub)
 
