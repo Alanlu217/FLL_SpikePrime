@@ -14,6 +14,7 @@ m_config = Config()
 
 
 m_menu = menu(m_config, [m_config.page1, m_config.page2], 50)
+m_menu.display()
 
 while True:
     m_menu.update()
