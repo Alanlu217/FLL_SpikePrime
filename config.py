@@ -35,13 +35,18 @@ class Config:
         self.page1 = [self.reset, self.testTurn, other.testRun1]
 
         self.page2 = [self.printInfo, other._lightCal,
-                      self.gyroCal, other._tyreClear]
+                      self.gyroCal, self.tyreClean]
 
     def testTurn(self, config):
         self.drive.turnTo(90)
 
     def gyroCal(self, config):
         self.gyro.calibrate()
+
+    def tyreClean(self, config):
+        while (len(config.hub.buttons.pressed()) == 0):
+            config.drive.drive.drive(100, 0)
+        config.drive.drive.stop()
 
     def reset(self, config):
         self.drive.setHead()
