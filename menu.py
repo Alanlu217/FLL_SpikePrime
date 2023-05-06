@@ -23,6 +23,7 @@ class menu:
         self.hub.system.set_stop_button((Button.LEFT, Button.RIGHT))
         self.hub.speaker.volume(volume)
         self.config.hub.light.on(Color.WHITE)
+        self.timer = StopWatch()
 
     def update(self):
 
@@ -45,6 +46,12 @@ class menu:
             if (self.index >= len(self.pages[self.page])):
                 self.index = 0
         elif Button.BLUETOOTH in buttons:
+            self.timer.reset()
+            self.timer.resume()
+            while Button.BLUETOOTH in buttons:
+                if (self.timer.time() > 200):
+                    raise KeyboardInterrupt
+                buttons = self.hub.buttons.pressed()
             self.page += 1
             if (self.page >= self.numPages):
                 self.page = 0
