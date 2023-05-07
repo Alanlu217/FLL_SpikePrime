@@ -131,3 +131,13 @@ class Drivebase:
 
             curr_distance = abs(self.drive.distance())
         self.stop()
+
+    def moveArc(self, radius, heading, speed=100, timeout=10000):
+        turn_rate = (360 * speed) / (umath.pi * 2 * radius)
+        tolerance = int(2 * abs(speed) / 100)
+
+        runTime = StopWatch()
+        self.drive.drive(speed, turn_rate)
+        while round(self.turnAngle(heading)) not in range(-tolerance, tolerance) and runTime.time() < timeout:
+            pass
+        self.stop()
