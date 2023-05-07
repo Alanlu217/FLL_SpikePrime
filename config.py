@@ -8,6 +8,7 @@ from pybricks.tools import wait
 
 import other
 from drivebase import Drivebase
+from lightSensor import LightSensor
 from gyro import Gyro
 
 from micropython import const
@@ -27,6 +28,9 @@ class Config:
 
         self.gyro = Gyro(self.hub)
 
+        self.light = LightSensor(Port.D, self.hub)
+        self.light.loadValues()
+
         self.leftMotor = Motor(Port.F, Direction.CLOCKWISE)
         self.rightMotor = Motor(Port.B, Direction.COUNTERCLOCKWISE)
 
@@ -35,11 +39,34 @@ class Config:
 
         self.page1 = [self.reset, self.testTurn, other.testRun1]
 
-        self.page2 = [self.printInfo, other._lightCal,
+        self.page2 = [self.printInfo, self.lightCal,
                       self.gyroCal, self.tyreClean]
 
     def testTurn(self, config):
         self.drive.turnTo(90)
+
+    def printInfo(self, config):
+        print(config.hub.system.name())
+        print(self.hub.battery.voltage())
+        config.hub.display.text(str(config.hub.system.name()), 500, 50)
+        self.hub.display.text(str(self.hub.battery.voltage()), 500, 50)
+
+    def lightCal(self, config):
+        lmin = 100
+        lmax = 0
+        cancel = False
+
+        config.drive.drive.reset()
+        config.drive.drive.drive(50, 0)
+        while self.drive.drive.distance() < 100:
+            lmax = max(self.light.sensor.reflection(), lmax)
+            lmin = min(self.light.sensor.reflection(), lmin)
+        config.drive.stop()
+
+        print("light %2i:%2i" % (lmin, lmax))
+
+        config.light.setCalValues(lmin, lmax)
+        config.light.saveValues()
 
     def gyroCal(self, config):
         self.gyro.calibrate()
@@ -53,9 +80,3 @@ class Config:
 
     def reset(self, config):
         self.drive.setHead()
-
-    def printInfo(self, config):
-        print(config.hub.system.name())
-        print(self.hub.battery.voltage())
-        config.hub.display.text(str(config.hub.system.name()), 500, 50)
-        self.hub.display.text(str(self.hub.battery.voltage()), 500, 50)
