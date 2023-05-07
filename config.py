@@ -4,6 +4,7 @@ from pybricks.pupdevices import Motor, ColorSensor
 from pybricks.parameters import Port, Direction
 from pybricks.geometry import Axis
 from pybricks.robotics import DriveBase
+from pybricks.tools import wait
 
 import other
 from drivebase import Drivebase
@@ -44,8 +45,10 @@ class Config:
         self.gyro.calibrate()
 
     def tyreClean(self, config):
+        config.drive.drive.drive(100, 0)
+        wait(200)
         while (len(config.hub.buttons.pressed()) == 0):
-            config.drive.drive.drive(100, 0)
+            pass
         config.drive.drive.stop()
 
     def reset(self, config):
