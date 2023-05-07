@@ -33,7 +33,7 @@ class Drivebase:
 
     # Sets current heading
     def setHead(self, angle=0):
-        self.gyro.reset_heading(angle)
+        self.gyro.reset_heading(round(angle / self.gyro.multiplier))
 
     def sign(self, x):
         return 1 if x >= 0 else -1
