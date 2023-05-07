@@ -18,7 +18,7 @@ class Gyro:
         while len(self.hub.buttons.pressed()) == 0:
             wait(100)
 
-        self.multiplier = 180 / self.gyro.heading()
+        self.multiplier = 180 / abs(self.gyro.heading())
         self.writeCal()
 
     def readCal(self):
