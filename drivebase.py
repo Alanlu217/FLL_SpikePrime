@@ -4,6 +4,7 @@ from pybricks.tools import StopWatch, wait
 import umath
 
 from gyro import Gyro
+from lightSensor import LightSensor
 
 
 class Drivebase:
@@ -106,4 +107,27 @@ class Drivebase:
             #        curr_distance)
             # logData.append([drive_speed, curr_distance])
         # print("MoveDist timeout=", timeout, "ms")
+        self.stop()
+
+    def lineFollower(self, distance: int, sensor: LightSensor, speed=250, side=1, kp=1.2, ki=0, kd=10):
+        self.drive.reset()
+
+        lastError = 0
+        integral = 0
+
+        curr_distance = abs(self.drive.distance())
+        while curr_distance < distance:
+            error = 60 - sensor.readLight()
+
+            derivative = error - lastError
+            lastError = error
+            integral = (integral / 2) + error
+
+            turnRate = (error * kp) + (derivative * kd) + (integral * ki)
+
+            ramp_speed = self.rampSpeed(distance, curr_distance, speed)
+
+            self.drive.drive(ramp_speed, turnRate)
+
+            curr_distance = abs(self.drive.distance())
         self.stop()
