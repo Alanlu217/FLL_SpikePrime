@@ -40,8 +40,10 @@ class menu:
                 self.index = ord(char) - 49
             elif (ord(char) == 61):
                 self.page += 1
+                self.index = 0
             elif (ord(char) == 45):
                 self.page -= 1
+                self.index = 0
             elif (ord(char) == 10):
                 self.run()
 
@@ -49,7 +51,6 @@ class menu:
 
             self.hub.display.off()
             self.display()
-            return
 
         buttons = self.hub.buttons.pressed()
         if (len(buttons) != 1):
@@ -101,3 +102,7 @@ class menu:
             self.index = len(self.pages[self.page]) - 1
         elif (self.index >= len(self.pages[self.page])):
             self.index = 0
+    
+    def start(self):
+        while True:
+            self.update()
