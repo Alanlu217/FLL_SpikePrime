@@ -1,5 +1,6 @@
 from pybricks.hubs import InventorHub
 from pybricks.tools import wait
+from pybricks.parameters import Button
 from ustruct import unpack, pack
 
 
@@ -15,11 +16,13 @@ class Gyro:
     def calibrate(self):
         self.gyro.reset_heading(0)
         wait(500)
-        while len(self.hub.buttons.pressed()) == 0:
+        while True:
+            if (Button.BLUETOOTH in self.hub.buttons.pressed()):
+                self.multiplier = 1080 / abs(self.gyro.heading())
+                self.writeCal()
+            elif (len(self.hub.buttons.pressed()) > 0):
+                break
             wait(100)
-
-        self.multiplier = 180 / abs(self.gyro.heading())
-        self.writeCal()
 
     def readCal(self):
         self.multiplier = unpack("f", self.hub.system.storage(0, read=4))[0]
