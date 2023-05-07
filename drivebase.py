@@ -127,7 +127,7 @@ class Drivebase:
 
             ramp_speed = self.rampSpeed(distance, curr_distance, speed)
 
-            self.drive.drive(ramp_speed, turnRate)
+            self.drive.drive(ramp_speed, turnRate * side)
 
             curr_distance = abs(self.drive.distance())
         self.stop()
