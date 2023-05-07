@@ -16,5 +16,12 @@ m_config = Config()
 m_menu = menu(m_config, [m_config.page1, m_config.page2], 50)
 m_menu.display()
 
-while True:
-    m_menu.update()
+try:
+    m_menu.start()
+except KeyboardInterrupt:
+    c = m_config
+    m = m_menu
+    d = m_config.drive
+    l = m_config.light
+
+    raise KeyboardInterrupt
