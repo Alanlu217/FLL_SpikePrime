@@ -13,8 +13,8 @@ Pybricks application used for repl
 - Each page can hold up to 10 items.
 
 - Single press bluetooth button to move forward by one page.
-- Double press bluetooth button for help on selected function
-- Hold to enter REPL mode
+- Hod bluetooth button for help on selected function
+- Double press to enter REPL mode
 
 - Single click center button to run selected run
 

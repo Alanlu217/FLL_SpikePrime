@@ -80,15 +80,17 @@ class menu:
         elif Button.BLUETOOTH in buttons:
             last_time_exit = self.timer.time()
             while Button.BLUETOOTH in buttons:
-                if (self.timer.time() - last_time_exit > 200):
-                    raise KeyboardInterrupt
+                if (self.timer.time() - last_time_exit > 300):
+                    self.printInfo()
+                    self.hub.display.off()
+                    self.display()
+                    return
 
                 buttons = self.hub.buttons.pressed()
 
             self.last_time_help = self.timer.time()
             if (self.bluetooth_pressed):
-                self.bluetooth_pressed = False
-                self.printInfo()
+                raise KeyboardInterrupt
             else:
                 self.bluetooth_pressed = True
 
