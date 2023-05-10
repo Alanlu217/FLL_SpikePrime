@@ -68,7 +68,7 @@ class Config:
 
         print("light %2i:%2i" % (lmin, lmax))
 
-        config.hub.display.text("Save?")
+        config.hub.display.text("S?")
         buttons = config.hub.buttons.pressed()
         while len(buttons) == 0:
             buttons = config.hub.buttons.pressed()
@@ -80,7 +80,7 @@ class Config:
     def gyroCal(self, config):
         config.gyro.calibrate()
 
-        config.hub.display.text("Save?")
+        config.hub.display.text("S?")
 
         buttons = config.hub.buttons.pressed()
         while len(buttons) == 0:
