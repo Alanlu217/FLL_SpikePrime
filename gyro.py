@@ -17,9 +17,9 @@ class Gyro:
         self.gyro.reset_heading(0)
         wait(500)
         while True:
-            if (Button.BLUETOOTH in self.hub.buttons.pressed()):
+            if (Button.CENTER in self.hub.buttons.pressed()):
                 self.multiplier = 1080 / abs(self.gyro.heading())
-                self.writeCal()
+                break
             elif (len(self.hub.buttons.pressed()) > 0):
                 break
             wait(100)
@@ -36,3 +36,6 @@ class Gyro:
 
     def reset_heading(self, angle: int = 0):
         self.gyro.reset_heading(angle)
+
+    def setCal(self, num):
+        self.multiplier = num

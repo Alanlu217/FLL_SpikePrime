@@ -1,7 +1,7 @@
 from pybricks.parameters import Port
 from pybricks.hubs import InventorHub
 from pybricks.pupdevices import Motor, ColorSensor
-from pybricks.parameters import Port, Direction
+from pybricks.parameters import Port, Direction, Button
 from pybricks.geometry import Axis
 from pybricks.robotics import DriveBase
 from pybricks.tools import wait
@@ -68,11 +68,26 @@ class Config:
 
         print("light %2i:%2i" % (lmin, lmax))
 
-        config.light.setCalValues(lmin, lmax)
-        config.light.saveValues()
+        config.hub.display.text("Save?")
+        buttons = config.hub.buttons.pressed()
+        while len(buttons) == 0:
+            buttons = config.hub.buttons.pressed()
+
+        if Button.BLUETOOTH in buttons:
+            config.light.setCalValues(lmin, lmax)
+            config.light.saveValues()
 
     def gyroCal(self, config):
-        self.gyro.calibrate()
+        config.gyro.calibrate()
+
+        config.hub.display.text("Save?")
+
+        buttons = config.hub.buttons.pressed()
+        while len(buttons) == 0:
+            buttons = config.hub.buttons.pressed()
+
+        if Button.BLUETOOTH in buttons:
+            config.gyro.writeCal()
 
     def tyreClean(self, config):
         config.drive.drive.drive(100, 0)
