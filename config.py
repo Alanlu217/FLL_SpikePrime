@@ -78,7 +78,7 @@ class Config:
             config.light.saveValues()
 
     def gyroCal(self, config):
-        config.gyro.calibrate()
+        val = config.gyro.calibrate()
 
         config.hub.display.text("S?")
 
@@ -87,6 +87,7 @@ class Config:
             buttons = config.hub.buttons.pressed()
 
         if Button.BLUETOOTH in buttons:
+            config.gyro.setCal(val)
             config.gyro.writeCal()
 
     def tyreClean(self, config):

@@ -18,8 +18,7 @@ class Gyro:
         wait(500)
         while True:
             if (Button.CENTER in self.hub.buttons.pressed()):
-                self.multiplier = 1080 / abs(self.gyro.heading())
-                break
+                return 1080 / abs(self.gyro.heading())
             elif (len(self.hub.buttons.pressed()) > 0):
                 break
             wait(100)
