@@ -11,11 +11,12 @@ from config import Config
 
 
 class menu:
-    def __init__(self, config: Config, pages: list, volume: int = 100):
+    def __init__(self, config: Config, pages: list, pageName: list, volume: int = 100):
         self.config = config
         self.hub = config.hub
 
         self.pages = pages
+        self.pageNames = pageName
 
         self.numPages = len(self.pages)
 
@@ -29,6 +30,10 @@ class menu:
         self.keyboard = uselect.poll()
         self.keyboard.register(usys.stdin, uselect.POLLIN)  # type: ignore
         self.timer = StopWatch()
+        self.timer.resume()
+
+        self.bluetooth_pressed = False
+        self.last_time_help = 0
 
     def update(self):
 
@@ -52,6 +57,15 @@ class menu:
             self.hub.display.off()
             self.display()
 
+        if (self.bluetooth_pressed and self.timer.time() - self.last_time_help > 200):
+            self.page += 1
+            self.index = 0
+            self.bluetooth_pressed = False
+
+            self.wrapIdx()
+            self.hub.display.off()
+            self.display()
+
         buttons = self.hub.buttons.pressed()
         if (len(buttons) != 1):
             wait(50)
@@ -64,15 +78,20 @@ class menu:
         elif Button.RIGHT in buttons:
             self.index += 1
         elif Button.BLUETOOTH in buttons:
-            self.timer.reset()
-            self.timer.resume()
+            last_time_exit = self.timer.time()
             while Button.BLUETOOTH in buttons:
-                if (self.timer.time() > 200):
+                if (self.timer.time() - last_time_exit > 200):
                     raise KeyboardInterrupt
 
                 buttons = self.hub.buttons.pressed()
-            self.page += 1
-            self.index = 0
+
+            self.last_time_help = self.timer.time()
+            if (self.bluetooth_pressed):
+                self.bluetooth_pressed = False
+                self.printInfo()
+            else:
+                self.bluetooth_pressed = True
+
         elif Button.CENTER in buttons:
             self.config.hub.light.on(Color.RED)
             self.run()
@@ -81,7 +100,8 @@ class menu:
         self.wrapIdx()
 
         self.display()
-        wait(200)
+        if not self.bluetooth_pressed:
+            wait(200)
 
     def display(self):
         for i in range(0, self.index+1):
@@ -102,7 +122,10 @@ class menu:
             self.index = len(self.pages[self.page]) - 1
         elif (self.index >= len(self.pages[self.page])):
             self.index = 0
-    
+
+    def printInfo(self):
+        self.hub.display.text(self.pageNames[self.page][self.index])
+
     def start(self):
         while True:
             self.update()

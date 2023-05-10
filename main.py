@@ -13,7 +13,7 @@ import other
 m_config = Config()
 
 
-m_menu = menu(m_config, [m_config.page1, m_config.page2], 50)
+m_menu = menu(m_config, [m_config.page1, m_config.page2], [m_config.page1Names, m_config.page2Names], 50)
 m_menu.display()
 
 try:
