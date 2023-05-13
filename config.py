@@ -37,7 +37,7 @@ class Config:
         self.drive = Drivebase(
             self, self.gyro, self.leftMotor, self.rightMotor, 56, 88)
 
-        self.page1 = [self.reset, self.testTurn, other.testRun1]
+        self.page1 = [self.reset, self.testTurn, other.testRun1, self.drive.moveDist(500, heading=0)]
 
         self.page1Names = ["Reset", "Test Turn", "Test Run 1"]
 

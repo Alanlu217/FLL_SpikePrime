@@ -2,6 +2,7 @@ from pybricks.hubs import InventorHub
 from pybricks.robotics import DriveBase
 from pybricks.tools import StopWatch, wait
 import umath
+from commands import CommandBase
 
 from gyro import Gyro
 from lightSensor import LightSensor
@@ -53,7 +54,7 @@ class Drivebase:
     def turnAngle(self, heading):
         return (heading - self.getHead() + 180) % 360 - 180
 
-    def turnTo(self, heading, tolerance=1, timeout=4000):
+    def _turnTo(self, heading, tolerance=1, timeout=4000):
         angle = self.turnAngle(heading)
         runTime = StopWatch()
         while round(angle) not in range(-tolerance, tolerance) and runTime.time() < timeout:
@@ -70,7 +71,52 @@ class Drivebase:
             delta_distance, self.config.SPEED_LIST_COUNT-1)]
         return self.sign(speedLimit) * min(speed, abs(speedLimit))
 
-    def moveDist(self, distance, speed=500, heading=None, turn=True, up=True, down=True, timeout=None):
+    class moveDist(CommandBase):
+        def __init__(self, distance, speed=500, heading=None, up=True, down=True, timeout=None):
+            self.distance = distance
+            self.speed = speed
+            self.heading = heading
+            self.up = up
+            self.down = down
+            self.timeout = timeout
+            self.cancel = False
+        
+        def init(self, config):
+            self.posDistance = abs(self.distance)
+            if self.speed < 0:
+                print("Error Negative speed")
+                self.cancel = True
+            
+            if self.heading == None:
+                self.heading = config.drive.getHead()
+            
+            self.rampSpeed_max = config.drive.rampSpeed(self.posDistance, self.posDistance/2, self.speed)
+            if self.timeout == None:
+                self.timeout = (self.posDistance / self.rampSpeed_max) * 2 * 1000 + 500
+            
+            config.drive.drive.reset()
+            self.timer = StopWatch()
+        
+        def execute(self, config):
+            self.curr_distance = abs(config.drive.drive.distance())
+            if self.up == False and self.curr_distance < self.posDistance/2:
+                drive_speed = self.speed
+            elif self.down == False and self.curr_distance > self.posDistance/2:
+                drive_speed = self.speed
+            else:
+                drive_speed = config.drive.rampSpeed(self.posDistance, self.curr_distance, self.speed)
+
+            config.drive.drive.drive(drive_speed*config.drive.sign(self.distance),
+                             config.drive.turnAngle(self.heading) * config.TURN_CORRECTION_SPEED)
+
+        def end(self, config):
+            config.drive.stop()
+        
+        def done(self, config):
+            return self.curr_distance >= self.posDistance or self.timer.time() > self.timeout
+
+
+    def _moveDist(self, distance, speed=500, heading=None, turn=True, up=True, down=True, timeout=None):
         posDistance = abs(distance)
         if speed < 0:
             print("Error Negative speed", speed)
@@ -109,7 +155,7 @@ class Drivebase:
         # print("MoveDist timeout=", timeout, "ms")
         self.stop()
 
-    def lineFollower(self, distance: int, sensor: LightSensor, speed=250, side=1, kp=1.2, ki=0, kd=10):
+    def _lineFollower(self, distance: int, sensor: LightSensor, speed=250, side=1, kp=1.2, ki=0, kd=10):
         self.drive.reset()
 
         lastError = 0
@@ -132,7 +178,7 @@ class Drivebase:
             curr_distance = abs(self.drive.distance())
         self.stop()
 
-    def moveArc(self, radius, heading, speed=100, timeout=10000):
+    def _moveArc(self, radius, heading, speed=100, timeout=10000):
         turn_rate = (360 * speed) / (umath.pi * 2 * radius)
         tolerance = int(2 * abs(speed) / 100)
 
