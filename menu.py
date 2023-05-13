@@ -8,11 +8,14 @@ import umath
 import uselect
 import usys
 from config import Config
+from commands import CommandBase
+from scheduler import scheduler
 
 
 class menu:
     def __init__(self, config: Config, pages: list, pageName: list, volume: int = 100):
         self.config = config
+        self.scheduler = scheduler
         self.hub = config.hub
 
         self.pages = pages
@@ -111,7 +114,15 @@ class menu:
                 self.page*2 + umath.floor(i / 5), i % 5, 100)
 
     def run(self):
-        self.pages[self.page][self.index](self.config)
+        start_time = self.timer.time()
+        self.scheduler.add(self.pages[self.page][self.index])
+        while (not self.scheduler.empty()) and self.timer.time() - start_time < 200:
+            self.scheduler.update()
+        while not self.scheduler.empty():
+            if Button.CENTER in self.hub.buttons.pressed():
+                self.scheduler.clear()
+                break
+            self.scheduler.update()
         self.index += 1
 
     def wrapIdx(self):

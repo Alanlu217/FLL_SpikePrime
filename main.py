@@ -7,10 +7,13 @@ from pybricks.tools import wait, StopWatch
 from micropython import const
 from menu import menu
 from config import Config
+from scheduler import scheduler
 
 import other
 
 m_config = Config()
+
+scheduler.setConfig(m_config)
 
 
 m_menu = menu(m_config, [m_config.page1, m_config.page2], [m_config.page1Names, m_config.page2Names], 50)
