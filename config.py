@@ -1,7 +1,7 @@
 from pybricks.parameters import Port
 from pybricks.hubs import InventorHub
 from pybricks.pupdevices import Motor
-from pybricks.parameters import Port, Direction, Button
+from pybricks.parameters import Port, Direction, Button, Color
 from pybricks.geometry import Axis
 from pybricks.tools import wait
 
@@ -77,6 +77,10 @@ class Config:
         if Button.BLUETOOTH in buttons:
             config.light.setCalValues(lmin, lmax)
             config.light.saveValues()
+            self.hub.light.on(Color.GREEN)
+        else:
+            self.hub.light.on(Color.RED)
+        wait(100)
 
     def gyroCal(self, config):
         val = config.gyro.calibrate()
@@ -90,6 +94,10 @@ class Config:
         if Button.BLUETOOTH in buttons:
             config.gyro.setCal(val)
             config.gyro.writeCal()
+            self.hub.light.on(Color.GREEN)
+        else:
+            self.hub.light.on(Color.RED)
+        wait(100)
 
     def tyreClean(self, config):
         config.drive.drive.drive(100, 0)
