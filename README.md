@@ -42,3 +42,9 @@ Enter runs selected run
 5 - 8: Light Calibration Min
 
 9 - 12: Light Calibration Max
+
+## Calibration Values
+
+### Roo10
+
+gyro.multiplier = 0.9910515

@@ -1,12 +1,10 @@
 from pybricks.parameters import Port
 from pybricks.hubs import InventorHub
-from pybricks.pupdevices import Motor, ColorSensor
+from pybricks.pupdevices import Motor
 from pybricks.parameters import Port, Direction, Button
 from pybricks.geometry import Axis
-from pybricks.robotics import DriveBase
 from pybricks.tools import wait
 
-import other
 from drivebase import Drivebase
 from lightSensor import LightSensor
 from gyro import Gyro
@@ -24,20 +22,22 @@ class Config:
         self.STARTSPEED = const(70)
         self.TURN_SPEED_MIN = const(30)
         self.TURN_SPEED_MAX = const(600)
-        self.TURN_CORRECTION_SPEED = const(20)
+        self.TURN_CORRECTION_SPEED = const(5)
+
+        self.curr = 0
 
         self.gyro = Gyro(self.hub)
 
-        self.light = LightSensor(Port.D, self.hub)
+        self.light = LightSensor(Port.B, self.hub)
         self.light.loadValues()
 
-        self.leftMotor = Motor(Port.F, Direction.CLOCKWISE)
-        self.rightMotor = Motor(Port.B, Direction.COUNTERCLOCKWISE)
+        self.leftMotor = Motor(Port.C, Direction.COUNTERCLOCKWISE)
+        self.rightMotor = Motor(Port.D, Direction.CLOCKWISE)
 
         self.drive = Drivebase(
-            self, self.gyro, self.leftMotor, self.rightMotor, 56, 88)
+            self, self.gyro, self.leftMotor, self.rightMotor, 56, 112)
 
-        self.page1 = [self.reset, self.testTurn, other.testRun1]
+        self.page1 = [self.reset, self.testTurn, self.testRun1]
 
         self.page1Names = ["Reset", "Test Turn", "Test Run 1"]
 
@@ -46,7 +46,8 @@ class Config:
         self.page2Names = ["Print Info", "Light Cal", "Gyro Cal", "Tyre Clean"]
 
     def testTurn(self, config):
-        self.drive.turnTo(90)
+        self.drive.turnTo(self.curr)
+        self.curr += 90
 
     def printInfo(self, config):
         print(config.hub.system.name())
@@ -98,4 +99,8 @@ class Config:
         config.drive.drive.stop()
 
     def reset(self, config):
+        self.drive.stop()
         self.drive.setHead()
+
+    def testRun1(self, config):
+        self.drive.moveDist(100000, speed=100)
