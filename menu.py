@@ -95,9 +95,7 @@ class menu:
                 self.bluetooth_pressed = True
 
         elif Button.CENTER in buttons:
-            self.config.hub.light.on(Color.RED)
             self.run()
-            self.config.hub.light.on(Color.WHITE)
 
         self.wrapIdx()
 
@@ -111,8 +109,10 @@ class menu:
                 self.page*2 + umath.floor(i / 5), i % 5, 100)
 
     def run(self):
+        self.config.hub.light.on(Color.CYAN)
         self.pages[self.page][self.index](self.config)
         self.index += 1
+        self.config.hub.light.on(Color.WHITE)
 
     def wrapIdx(self):
         if (self.page < 0):
