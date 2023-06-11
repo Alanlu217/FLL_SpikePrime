@@ -20,7 +20,7 @@ class Config:
         self.SPEED_LIST_COUNT = const(2000)
         self.ACCELERATION = const(400)
         self.STARTSPEED = const(70)
-        self.TURN_SPEED_MIN = const(30)
+        self.TURN_SPEED_MIN = const(40)
         self.TURN_SPEED_MAX = const(600)
         self.TURN_CORRECTION_SPEED = const(5)
 
@@ -37,9 +37,9 @@ class Config:
         self.drive = Drivebase(
             self, self.gyro, self.leftMotor, self.rightMotor, 56, 112)
 
-        self.page1 = [self.reset, self.testTurn, self.testRun1]
+        self.page1 = [self.reset, self.testTurn, self.testRun1, self.lineFollower]
 
-        self.page1Names = ["Reset", "Test Turn", "Test Run 1"]
+        self.page1Names = ["Reset", "Test Turn", "Test Run 1", "Line"]
 
         self.page2 = [self.printInfo, self.lightCal,
                       self.gyroCal, self.tyreClean]
@@ -112,3 +112,6 @@ class Config:
 
     def testRun1(self, config):
         self.drive.moveDist(100000, speed=100)
+
+    def lineFollower(self, config):
+        self.drive.lineFollower(100000, self.light, speed=150, kp=1.8)
