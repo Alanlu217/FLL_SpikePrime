@@ -13,8 +13,13 @@ import other
 m_config = Config()
 
 
-m_menu = menu(m_config, [m_config.page1, m_config.page2], [m_config.page1Names, m_config.page2Names], 50)
+if Button.LEFT in m_config.hub.buttons.pressed():
+    m_menu = menu(m_config, [m_config.page1, m_config.page2], [m_config.page1Names, m_config.page2Names], 0)
+else:
+    m_menu = menu(m_config, [m_config.page1, m_config.page2], [m_config.page1Names, m_config.page2Names], 50)
 m_menu.display()
+
+wait(200)
 
 try:
     m_menu.start()
