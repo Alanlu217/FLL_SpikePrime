@@ -1,16 +1,22 @@
 from pybricks.hubs import InventorHub
 from pybricks.pupdevices import Motor, ColorSensor, UltrasonicSensor
-from pybricks.parameters import Button, Color, Direction, Port, Side, Stop, Icon
+from pybricks.parameters import Button, Color, Direction, Port, Side, Stop, Icon, Axis
 from pybricks.robotics import DriveBase
 from pybricks.tools import wait, StopWatch
 
 from micropython import const
 from menu import menu
-from config import Config
+from config import ConfigAlanSpike, ConfigBasicRobot
 
 import other
 
-m_config = Config()
+hub = InventorHub(front_side=Axis.Y, top_side=Axis.Z)
+    
+name = hub.system.name()
+if name == "AlanSpike":
+    m_config = ConfigAlanSpike(hub)
+elif name == "Roo10":
+    m_config = ConfigBasicRobot(hub)
 
 
 if Button.LEFT in m_config.hub.buttons.pressed():
