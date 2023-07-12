@@ -13,6 +13,9 @@ from gyro import Gyro
 from micropython import const
 
 class Config:
+    """
+    Bare minimum of a config
+    """
     def __init__(self, hub):
         self.hub: InventorHub = hub 
     
