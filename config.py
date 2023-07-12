@@ -58,8 +58,8 @@ class ConfigAlanSpike(Config):
     def printInfo(self, config):
         print(config.hub.system.name())
         print(self.hub.battery.voltage())
-        config.hub.display.text(str(config.hub.system.name()), 500, 50)
-        self.hub.display.text(str(self.hub.battery.voltage()), 500, 50)
+        config.hub.display.text(str(config.hub.system.name()), 150, 10)
+        self.hub.display.text(str(self.hub.battery.voltage()), 250, 10)
 
     def lightCal(self, config):
         lmin = 100
@@ -139,9 +139,9 @@ class ConfigBasicRobot(Config):
         self.drive = Drivebase(
             self, self.gyro, self.leftMotor, self.rightMotor, 56, 112)
 
-        self.page1 = [self.reset, self.testTurn, self.testRun1, self.lineFollower]
+        self.page1 = [self.reset, [self.drive.turnTo(90), self.drive.turnTo(0)], self.drive.lineFollower(100000, self.light, speed=150, kp=1.8)]
 
-        self.page1Names = ["Reset", "Test Turn", "Test Run 1", "Line"]
+        self.page1Names = ["Reset", "Test Turn", "Line"]
 
         self.page2 = [self.printInfo, self.lightCal,
                       self.gyroCal, self.tyreClean]
@@ -157,8 +157,8 @@ class ConfigBasicRobot(Config):
     def printInfo(self, config):
         print(config.hub.system.name())
         print(self.hub.battery.voltage())
-        config.hub.display.text(str(config.hub.system.name()), 500, 50)
-        self.hub.display.text(str(self.hub.battery.voltage()), 500, 50)
+        config.hub.display.text(str(config.hub.system.name()), 150, 10)
+        self.hub.display.text(str(self.hub.battery.voltage()), 150, 10)
 
     def lightCal(self, config):
         lmin = 100

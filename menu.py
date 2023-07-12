@@ -37,8 +37,6 @@ class menu:
         self.last_time_help = 0
 
     def update(self):
-
-        # print(self.config.hub.imu.heading())
         if (self.keyboard.poll(0)):
             usys.stdin.read(1)  # type: ignore
             char = usys.stdin.read(1)  # type: ignore
@@ -115,6 +113,8 @@ class menu:
         self.execute()
         self.config.stop()
 
+        wait(400)
+
         self.index += 1
         self.config.hub.light.on(Color.WHITE)
 
@@ -159,9 +159,10 @@ class menu:
             self.index = 0
 
     def printInfo(self):
-        self.hub.display.text(self.pageNames[self.page][self.index])
+        self.hub.display.text(self.pageNames[self.page][self.index], on=150, off=10)
 
     def start(self):
+        self.hub.speaker.beep(550, 50)
         while True:
             self.update()
     
