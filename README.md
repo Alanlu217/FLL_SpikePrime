@@ -3,9 +3,9 @@
 ## How to use
 
 pybricksdev python tool used to download and run (only main.py)
-e.g. `pybricks dev run ble -n AlanSpike main.py`
+e.g. `pybricksdev run ble -n AlanSpike main.py`
 
-Pybricks application used for repl
+Pybricks application used for REPL
 
 ## Menu Controls
 
@@ -13,7 +13,7 @@ Pybricks application used for repl
 - Each page can hold up to 10 items.
 
 - Single press bluetooth button to move forward by one page.
-- Hod bluetooth button for help on selected function
+- Hold bluetooth button for help on selected function
 - Double press to enter REPL mode
 
 - Single click center button to run selected run
