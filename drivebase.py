@@ -54,12 +54,16 @@ class Drivebase:
         return (heading - self.getHead() + 180) % 360 - 180
 
     def turnTo(self, heading, tolerance=1, timeout=4000):
-        angle = self.turnAngle(heading)
-        runTime = StopWatch()
-        while round(angle) not in range(-tolerance, tolerance) and runTime.time() < timeout:
-            self.drive.drive(0, self.turnSpeed(angle))
+        def _turnTo():
             angle = self.turnAngle(heading)
-        self.stop()
+            runTime = StopWatch()
+            while round(angle) not in range(-tolerance, tolerance) and runTime.time() < timeout:
+                self.drive.drive(0, self.turnSpeed(angle))
+                angle = self.turnAngle(heading)
+                yield True
+            self.stop()
+            yield False
+        return _turnTo
 
     def rampSpeed(self, distance, curr_distance, speedLimit):
         if curr_distance > distance / 2:
@@ -71,73 +75,89 @@ class Drivebase:
         return self.sign(speedLimit) * min(speed, abs(speedLimit))
 
     def moveDist(self, distance, speed=500, heading=None, turn=True, up=True, down=True, timeout=None):
-        posDistance = abs(distance)
-        if speed < 0:
-            print("Error Negative speed", speed)
-            return
+        def _moveDist():
+            posDistance = abs(distance)
+            if speed < 0:
+                print("Error Negative speed", speed)
+                return
 
-        if heading == None:
-            heading = self.getHead()
-        elif turn and abs(self.turnAngle(heading)) > 5:
-            self.turnTo(heading)
+            if heading == None:
+                heading = self.getHead()
+            elif turn and abs(self.turnAngle(heading)) > 5:
+                self.turnTo(heading)
 
-        rampSpeed_max = self.rampSpeed(posDistance, posDistance/2, speed)
-        if timeout == None:
-            # * 2000 to double time and convert to milliseconds
-            timeout = (posDistance / rampSpeed_max) * 2 * 1000 + 500
-        # logData = []
+            rampSpeed_max = self.rampSpeed(posDistance, posDistance/2, speed)
+            if timeout == None:
+                # * 2000 to double time and convert to milliseconds
+                timeout = (posDistance / rampSpeed_max) * 2 * 1000 + 500
+            # logData = []
 
-        self.drive.reset()
-        timer = StopWatch()
-        while timer.time() < timeout:
-            # print(runState.getStopFlag(), runButton.pressed())
-            curr_distance = abs(self.drive.distance())
-            if curr_distance >= posDistance:
-                break
-            if up == False and curr_distance < posDistance/2:
-                drive_speed = speed
-            elif down == False and curr_distance > posDistance/2:
-                drive_speed = speed
-            else:
-                drive_speed = self.rampSpeed(posDistance, curr_distance, speed)
+            self.drive.reset()
+            timer = StopWatch()
+            while timer.time() < timeout:
+                # print(runState.getStopFlag(), runButton.pressed())
+                curr_distance = abs(self.drive.distance())
+                if curr_distance >= posDistance:
+                    break
+                if up == False and curr_distance < posDistance/2:
+                    drive_speed = speed
+                elif down == False and curr_distance > posDistance/2:
+                    drive_speed = speed
+                else:
+                    drive_speed = self.rampSpeed(posDistance, curr_distance, speed)
 
-            self.drive.drive(drive_speed*self.sign(distance),
-                             self.turnAngle(heading) * self.config.TURN_CORRECTION_SPEED)
-            # print("Speed, drive_speed, distance: ", speed, drive_speed, \
-            #        curr_distance)
-            # logData.append([drive_speed, curr_distance])
-        # print("MoveDist timeout=", timeout, "ms")
-        self.stop()
+                self.drive.drive(drive_speed*self.sign(distance),
+                                self.turnAngle(heading) * self.config.TURN_CORRECTION_SPEED)
+
+                yield True
+                # print("Speed, drive_speed, distance: ", speed, drive_speed, \
+                #        curr_distance)
+                # logData.append([drive_speed, curr_distance])
+            # print("MoveDist timeout=", timeout, "ms")
+            self.stop()
+            yield False
+
+        return _moveDist
 
     def lineFollower(self, distance: int, sensor: LightSensor, speed=250, side=1, kp=1.2, ki=0, kd=10):
-        self.drive.reset()
+        def _lineFollower():
+            self.drive.reset()
 
-        lastError = 0
-        integral = 0
-
-        curr_distance = abs(self.drive.distance())
-        while curr_distance < distance:
-            error = 60 - sensor.readLight()
-
-            derivative = error - lastError
-            lastError = error
-            integral = (integral / 2) + error
-
-            turnRate = (error * kp) + (derivative * kd) + (integral * ki)
-
-            ramp_speed = self.rampSpeed(distance, curr_distance, speed)
-
-            self.drive.drive(ramp_speed, turnRate * side)
+            lastError = 0
+            integral = 0
 
             curr_distance = abs(self.drive.distance())
-        self.stop()
+            while curr_distance < distance:
+                error = 60 - sensor.readLight()
+
+                derivative = error - lastError
+                lastError = error
+                integral = (integral / 2) + error
+
+                turnRate = (error * kp) + (derivative * kd) + (integral * ki)
+
+                ramp_speed = self.rampSpeed(distance, curr_distance, speed)
+
+                self.drive.drive(ramp_speed, turnRate * side)
+
+                curr_distance = abs(self.drive.distance())
+
+                yield True
+            self.stop()
+            yield False
+
+        return _lineFollower
 
     def moveArc(self, radius, heading, speed=100, timeout=10000):
-        turn_rate = (360 * speed) / (umath.pi * 2 * radius)
-        tolerance = int(2 * abs(speed) / 100)
+        def _moveArc():
+            turn_rate = (360 * speed) / (umath.pi * 2 * radius)
+            tolerance = int(2 * abs(speed) / 100)
 
-        runTime = StopWatch()
-        self.drive.drive(speed, turn_rate)
-        while round(self.turnAngle(heading)) not in range(-tolerance, tolerance) and runTime.time() < timeout:
-            pass
-        self.stop()
+            runTime = StopWatch()
+            self.drive.drive(speed, turn_rate)
+            while round(self.turnAngle(heading)) not in range(-tolerance, tolerance) and runTime.time() < timeout:
+                yield True
+            self.stop()
+            yield False
+        
+        return _moveArc

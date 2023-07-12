@@ -7,6 +7,7 @@ from pybricks.tools import wait, StopWatch
 import umath
 import uselect
 import usys
+from other import isGen
 from config import Config
 
 
@@ -110,9 +111,41 @@ class menu:
 
     def run(self):
         self.config.hub.light.on(Color.CYAN)
-        self.pages[self.page][self.index](self.config)
+
+        self.execute()
+        self.config.stop()
+
         self.index += 1
         self.config.hub.light.on(Color.WHITE)
+
+    def execute(self):
+        try:
+            for item in self.pages[self.page][self.index]:
+                if callable(item):
+                    try:
+                        temp = item()
+                        if isGen(temp):
+                            while next(temp):
+                                if self.quit(): return
+                    except TypeError:
+                        item(self.config)
+                else:
+                    count = len(item)
+                    item = [i() for i in item]
+                    while count != 0:
+                        for i in range(len(item) - 1, -1, -1):
+                            if self.quit(): return
+                            if not next(item[i]):
+                                count -= 1
+                                del item[i]
+        except TypeError:
+            try:
+                temp = self.pages[self.page][self.index]()
+                if isGen(temp):
+                    while next(temp):
+                        if self.quit(): return
+            except TypeError:
+                self.pages[self.page][self.index](self.config)
 
     def wrapIdx(self):
         if (self.page < 0):
@@ -131,3 +164,8 @@ class menu:
     def start(self):
         while True:
             self.update()
+    
+    def quit(self):
+        if Button.BLUETOOTH in self.hub.buttons.pressed():
+            return True
+        return False

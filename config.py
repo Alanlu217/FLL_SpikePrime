@@ -6,7 +6,6 @@ from pybricks.geometry import Axis
 from pybricks.robotics import DriveBase
 from pybricks.tools import wait
 
-import other
 from drivebase import Drivebase
 from lightSensor import LightSensor
 from gyro import Gyro
@@ -16,6 +15,9 @@ from micropython import const
 class Config:
     def __init__(self, hub):
         self.hub: InventorHub = hub 
+    
+    def stop(self):
+        pass
 
 class ConfigAlanSpike(Config):
     def __init__(self, hub):
@@ -39,13 +41,16 @@ class ConfigAlanSpike(Config):
         self.drive = Drivebase(
             self, self.gyro, self.leftMotor, self.rightMotor, 56, 88)
 
-        self.page1 = [self.reset, self.testTurn, other.testRun1]
+        self.page1 = [self.reset, [self.drive.turnTo(90), self.drive.turnTo(0)]]
 
         self.page1Names = ["Reset", "Test Turn", "Test Run 1"]
 
         self.page2 = [self.printInfo, self.lightCal,
                       self.gyroCal, self.tyreClean]
         self.page2Names = ["Print Info", "Light Cal", "Gyro Cal", "Tyre Clean"]
+    
+    def stop(self):
+        self.drive.stop()
 
     def testTurn(self, config):
         self.drive.turnTo(90)
@@ -141,6 +146,9 @@ class ConfigBasicRobot(Config):
         self.page2 = [self.printInfo, self.lightCal,
                       self.gyroCal, self.tyreClean]
         self.page2Names = ["Print Info", "Light Cal", "Gyro Cal", "Tyre Clean"]
+    
+    def stop(self):
+        self.drive.stop()
 
     def testTurn(self, config):
         self.drive.turnTo(self.curr)
