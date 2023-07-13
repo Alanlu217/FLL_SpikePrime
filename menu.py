@@ -5,6 +5,7 @@ import umath
 import uselect
 import usys
 from other import isGen
+from button import Buttons
 from config import Config
 
 
@@ -13,6 +14,7 @@ class menu:
     def __init__(self, config: Config, pages: list, pageName: list, volume: int = 100):
         self.config = config
         self.hub = config.hub
+        self.buttons = Buttons(self.hub)
 
         self.pages = pages
         self.pageNames = pageName
@@ -40,6 +42,10 @@ class menu:
         """
         Main loop
         """
+        
+        # Update state of all buttons
+        self.buttons.update()
+
         # Handles keyboard input
         if (self.keyboard.poll(0)):
             usys.stdin.read(1)  # type: ignore
@@ -60,8 +66,27 @@ class menu:
             self.hub.display.off()
             self.display()
 
-        # If bluetooth button pressed once, switches pages
-        if (self.bluetooth_pressed and self.timer.time() - self.last_time_help > 200):
+        # Check if one button is pressed on the robot
+        if self.buttons.one_pressed():
+            self.hub.display.off()
+            self.hub.speaker.beep(500, 50)
+
+        if self.buttons.pressed(Button.BLUETOOTH):
+            self.bluetooth_pressed = True
+        if self.buttons.pressed(Button.LEFT):
+            self.index -= 1
+        elif self.buttons.pressed(Button.RIGHT):
+            self.index += 1
+        elif self.buttons.held(Button.BLUETOOTH):
+            self.bluetooth_pressed = False
+            self.printInfo()
+            self.hub.display.off()
+            self.display()
+            self.buttons.time_buttons[Button.BLUETOOTH].reset()
+            return
+        elif self.buttons.double_pressed(Button.BLUETOOTH):
+            raise KeyboardInterrupt
+        elif self.bluetooth_pressed and self.buttons.last_press(Button.BLUETOOTH) > 250:
             self.page += 1
             self.index = 0
             self.bluetooth_pressed = False
@@ -70,45 +95,12 @@ class menu:
             self.hub.display.off()
             self.display()
 
-        # Check if one button is pressed on the robot
-        buttons = self.hub.buttons.pressed()
-        if (len(buttons) != 1):
-            wait(50)
-            return
-
-        # If pressed turns display off and beeps
-        self.hub.display.off()
-        self.hub.speaker.beep(500, 50)
-
-        if Button.LEFT in buttons:
-            self.index -= 1
-        elif Button.RIGHT in buttons:
-            self.index += 1
-        elif Button.BLUETOOTH in buttons: # If bluetooth button held, prints information on selected item
-            last_time_exit = self.timer.time()
-            while Button.BLUETOOTH in buttons:
-                if (self.timer.time() - last_time_exit > 300):
-                    self.printInfo()
-                    self.hub.display.off()
-                    self.display()
-                    return
-
-                buttons = self.hub.buttons.pressed()
-
-            self.last_time_help = self.timer.time()
-            if (self.bluetooth_pressed): # If pressed twice, turns in REPL mode
-                raise KeyboardInterrupt
-            else:
-                self.bluetooth_pressed = True
-
-        elif Button.CENTER in buttons: # Runs selected run if center button pressed
+        elif self.buttons.pressed(Button.CENTER):
             self.run()
 
         self.wrapIdx() # Makes sure index is within bounds
 
         self.display() # Update display
-        if not self.bluetooth_pressed:
-            wait(200) # Adds small delay
 
     def display(self):
         """
