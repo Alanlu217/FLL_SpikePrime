@@ -4,6 +4,7 @@ from pybricks.tools import StopWatch, wait
 import umath
 
 from gyro import Gyro
+from other import coroutine
 from lightSensor import LightSensor
 
 
@@ -63,6 +64,7 @@ class Drivebase:
     def turnAngle(self, heading):
         return (heading - self.getHead() + 180) % 360 - 180
 
+    @coroutine
     def turnTo(self, heading, tolerance=1, timeout=4000):
         """
         Turns the robot on the spot to a given heading
@@ -87,6 +89,7 @@ class Drivebase:
             delta_distance, self.config.SPEED_LIST_COUNT-1)]
         return self.sign(speedLimit) * min(speed, abs(speedLimit))
 
+    @coroutine
     def moveDist(self, distance, speed=500, heading=None, turn=True, up=True, down=True, timeout=None):
         """
         Moves the robot in a straight line for a given distance in a given heading
@@ -137,6 +140,7 @@ class Drivebase:
 
         return _moveDist
 
+    @coroutine
     def lineFollower(self, distance: int, sensor: LightSensor, speed=250, side=1, kp=1.2, ki=0, kd=10):
         """
         Follows a line for a certain distance
@@ -175,6 +179,7 @@ class Drivebase:
 
         return _lineFollower
 
+    @coroutine
     def moveArc(self, radius, heading, speed=100, timeout=10000):
         """
         Given a radius and end heading, moves the robot in an arc.

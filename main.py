@@ -3,6 +3,7 @@ from pybricks.parameters import Button, Axis
 from pybricks.tools import wait
 
 from menu import menu
+from other import setRepl
 from config import ConfigAlanSpike, ConfigBasicRobot
 
 # Setup hub
@@ -32,6 +33,7 @@ wait(200)
 try:
     m_menu.start()
 except KeyboardInterrupt: # Add shortcuts for debugging
+    setRepl()
     c = m_config
     m = m_menu
     d = m_config.drive
