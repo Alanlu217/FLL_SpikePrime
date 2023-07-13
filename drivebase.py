@@ -96,23 +96,24 @@ class Drivebase:
 
         Ramp up and down can be controlled by up and down flags
         """
+
+        posDistance = abs(distance)
+        if speed < 0:
+            print("Error Negative speed", speed)
+            return
+
+        if heading == None:
+            heading = self.getHead()
+        elif turn and abs(self.turnAngle(heading)) > 5:
+            self.turnTo(heading)
+
+        rampSpeed_max = self.rampSpeed(posDistance, posDistance/2, speed)
+        if timeout == None:
+            # * 2000 to double time and convert to milliseconds
+            timeout = (posDistance / rampSpeed_max) * 2 * 1000 + 500
+        # logData = []
+
         def _moveDist():
-            posDistance = abs(distance)
-            if speed < 0:
-                print("Error Negative speed", speed)
-                return
-
-            if heading == None:
-                heading = self.getHead()
-            elif turn and abs(self.turnAngle(heading)) > 5:
-                self.turnTo(heading)
-
-            rampSpeed_max = self.rampSpeed(posDistance, posDistance/2, speed)
-            if timeout == None:
-                # * 2000 to double time and convert to milliseconds
-                timeout = (posDistance / rampSpeed_max) * 2 * 1000 + 500
-            # logData = []
-
             self.drive.reset()
             timer = StopWatch()
             while timer.time() < timeout:
