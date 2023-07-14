@@ -168,7 +168,11 @@ class ConfigBasicRobot(Config):
         self.drive = Drivebase(
             self, self.gyro, self.leftMotor, self.rightMotor, 56, 112)
 
-        self.page1 = [self.reset, [self.drive.turnTo(90), self.drive.turnTo(180), self.drive.turnTo(270), self.drive.turnTo(0)], self.drive.lineFollower(100000, self.light, speed=150, kp=1.8)]
+        self.page1 = [self.reset, 
+                        [self.drive.turnTo(90), self.drive.turnTo(180),
+                        self.drive.turnTo(270), self.drive.turnTo(0)],
+                     self.drive.lineFollower(100000, self.light, speed=150, kp=1.8),
+                     self.drive.moveDist(10000, speed=200)]
 
         self.page1Names = ["Reset", "Test Turn", "Line"]
 
