@@ -27,8 +27,6 @@ else:
 # Display menu
 m_menu.display()
 
-wait(200)
-
 # Start menu loop
 try:
     m_menu.start()

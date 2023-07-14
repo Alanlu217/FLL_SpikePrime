@@ -38,6 +38,8 @@ class menu:
         self.bluetooth_pressed = False
         self.last_time_help = 0
 
+        self.buttons.update()
+
     def update(self):
         """
         Main loop
@@ -118,8 +120,6 @@ class menu:
 
         self.execute() # Handles generator / normal function
         self.config.stop() # Stops all motors once completed
-
-        wait(400)
 
         self.index += 1 # Moves to next run
         self.config.hub.light.on(Color.WHITE) # Changes back to white when idle
