@@ -146,7 +146,7 @@ class Drivebase:
         """
         Follows a line for a certain distance
 
-        Recquires a LightSensor object
+        Requires a LightSensor object
 
         side is either 1 or -1, controls which side of the line it will follow
 

@@ -26,6 +26,7 @@ class ConfigAlanSpike(Config):
     def __init__(self, hub):
         self.hub = hub
 
+        # Sets up the constants for the drivebase
         self.SPEED_LIST_COUNT = const(2000)
         self.ACCELERATION = const(400)
         self.STARTSPEED = const(70)
@@ -33,38 +34,53 @@ class ConfigAlanSpike(Config):
         self.TURN_SPEED_MAX = const(600)
         self.TURN_CORRECTION_SPEED = const(20)
 
-        self.gyro = Gyro(self.hub)
+        self.gyro = Gyro(self.hub) # Gets the gyro as an object
 
-        self.light = LightSensor(Port.D, self.hub)
-        self.light.loadValues()
+        self.light = LightSensor(Port.D, self.hub) # Creates a light sensor object
+        self.light.loadValues() # Loads calibration values from internal storage
 
+        # Sets up drive motors
         self.leftMotor = Motor(Port.F, Direction.CLOCKWISE)
         self.rightMotor = Motor(Port.B, Direction.COUNTERCLOCKWISE)
 
+        # Sets up drivebase
         self.drive = Drivebase(
             self, self.gyro, self.leftMotor, self.rightMotor, 56, 88)
 
-        self.page1 = [self.reset, [self.drive.turnTo(90), self.drive.turnTo(0)]]
+        # Sets up the menu
+        self.page1 = [self.reset, [self.drive.turnTo(90), self.drive.turnTo(0)]] # Page 1
 
-        self.page1Names = ["Reset", "Test Turn", "Test Run 1"]
+        self.page1Names = ["Reset", "Test Turn", "Test Run 1"] # Names for page 1
 
         self.page2 = [self.printInfo, self.lightCal,
-                      self.gyroCal, self.tyreClean]
-        self.page2Names = ["Print Info", "Light Cal", "Gyro Cal", "Tyre Clean"]
+                      self.gyroCal, self.tyreClean] # Page 2
+        self.page2Names = ["Print Info", "Light Cal", "Gyro Cal", "Tyre Clean"] # Names for page 2
     
     def stop(self):
+        """
+        Function called at end of each run.
+
+        Should stop everything from moving
+        """
         self.drive.stop()
 
-    def testTurn(self, config):
-        self.drive.turnTo(90)
-
     def printInfo(self, config):
+        """
+        Prints info to the hub display
+        """
         print(config.hub.system.name())
         print(self.hub.battery.voltage())
         config.hub.display.text(str(config.hub.system.name()), 150, 10)
         self.hub.display.text(str(self.hub.battery.voltage()), 250, 10)
 
     def lightCal(self, config):
+        """
+        Moves robot over a line and measures min and max light readings.
+
+        Uses this to calibrate the light sensor.
+
+        Also stores values to internal storage.
+        """
         lmin = 100
         lmax = 0
         cancel = False
@@ -92,6 +108,14 @@ class ConfigAlanSpike(Config):
         wait(100)
 
     def gyroCal(self, config):
+        """
+        Calibrates gyro and stores values to internal storage.
+
+        Steps:
+        1. Spin robot 3 times
+        2. Press center button to finish
+        3. Press bluetooth button to save values
+        """
         val = config.gyro.calibrate()
 
         config.hub.display.text("S?")
@@ -109,6 +133,11 @@ class ConfigAlanSpike(Config):
         wait(100)
 
     def tyreClean(self, config):
+        """
+        Spins drive motors at a constant speed
+
+        Waits for button press to finish
+        """
         config.drive.drive.drive(100, 0)
         wait(200)
         while (len(config.hub.buttons.pressed()) == 0):
