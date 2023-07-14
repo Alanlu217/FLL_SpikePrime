@@ -24,10 +24,23 @@ class Gyro:
         wait(500)
         while True:
             if (Button.CENTER in self.hub.buttons.pressed()):
-                return 1080 / abs(self.gyro.heading())
-            elif (len(self.hub.buttons.pressed()) > 0):
+                val = abs(self.gyro.heading())
                 break
-            wait(100)
+            wait(50)
+        num = 1
+        wait(200)
+        buttons = self.hub.buttons.pressed()
+        while True:
+            self.hub.display.char(str(num))
+            wait(200)
+            if Button.LEFT in buttons:
+                num -= 1
+            elif Button.RIGHT in buttons:
+                num += 1
+            elif Button.CENTER in buttons:
+                return (360 * num) / val
+            num = min(9, max(1, num))
+            buttons = self.hub.buttons.pressed()
 
     def readCal(self):
         """
