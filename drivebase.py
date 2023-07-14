@@ -97,26 +97,30 @@ class Drivebase:
         Ramp up and down can be controlled by up and down flags
         """
 
-        posDistance = abs(distance)
-        if speed < 0:
-            print("Error Negative speed", speed)
-            return
-
-        if heading == None:
-            heading = self.getHead()
-        elif turn and abs(self.turnAngle(heading)) > 5:
-            self.turnTo(heading)
-
-        rampSpeed_max = self.rampSpeed(posDistance, posDistance/2, speed)
-        if timeout == None:
-            # * 2000 to double time and convert to milliseconds
-            timeout = (posDistance / rampSpeed_max) * 2 * 1000 + 500
-        # logData = []
-
         def _moveDist():
+            posDistance = abs(distance)
+            if speed < 0:
+                print("Error Negative speed", speed)
+                return
+            
+            if heading is None:
+                head = self.getHead()
+            else:
+                head = heading
+                if turn and abs(self.turnAngle(head)) > 5:
+                    self.turnTo(head)
+
+            rampSpeed_max = self.rampSpeed(posDistance, posDistance/2, speed)
+            if timeout is None:
+                # * 2000 to double time and convert to milliseconds
+                time = (posDistance / rampSpeed_max) * 2 * 1000 + 500
+            else:
+                time = timeout
+            # logData = []
+
             self.drive.reset()
             timer = StopWatch()
-            while timer.time() < timeout:
+            while timer.time() < time:
                 # print(runState.getStopFlag(), runButton.pressed())
                 curr_distance = abs(self.drive.distance())
                 if curr_distance >= posDistance:
@@ -129,7 +133,7 @@ class Drivebase:
                     drive_speed = self.rampSpeed(posDistance, curr_distance, speed)
 
                 self.drive.drive(drive_speed*self.sign(distance),
-                                self.turnAngle(heading) * self.config.TURN_CORRECTION_SPEED)
+                                self.turnAngle(head) * self.config.TURN_CORRECTION_SPEED)
 
                 yield True
                 # print("Speed, drive_speed, distance: ", speed, drive_speed, \
