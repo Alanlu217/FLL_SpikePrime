@@ -4,7 +4,8 @@ from pybricks.tools import wait
 
 from menu import menu
 from other import setRepl
-from config import ConfigAlanSpike, ConfigBasicRobot
+from AlanSpike import ConfigAlanSpike
+from Roo10 import Roo10
 
 # Setup hub
 hub = InventorHub(front_side=Axis.Y, top_side=Axis.Z)
@@ -14,7 +15,7 @@ name = hub.system.name()
 if name == "AlanSpike":
     m_config = ConfigAlanSpike(hub)
 elif name == "Roo10":
-    m_config = ConfigBasicRobot(hub)
+    m_config = Roo10(hub)
 
 
 # If left button pressed on startup
